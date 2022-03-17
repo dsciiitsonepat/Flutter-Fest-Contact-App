@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact/add_contact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:math' as math;
-import 'data.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -12,35 +12,44 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final Contacts contacts = Contacts();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Contact App"),
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddContact(),
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-      ),
-      body: ListView.builder(
-          itemCount: contacts.contact.length,
-          itemBuilder: (context, index) {
-            return ContactWidget(
-              name: contacts.contact[index].name,
-              num: contacts.contact[index].num,
+        appBar: AppBar(
+          title: Text("Contact App"),
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddContact(),
+              ),
             );
-          }),
-    );
+          },
+          child: Icon(Icons.add),
+        ),
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('contacts').snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return ListView(children: <Widget>[
+              ...snapshot.data!.docs.map(
+                (document) {
+                  return Container(
+                    child: ContactWidget(name: document['name'], num: document['num'],),
+                  );
+                },
+              ),
+            ]);
+          },
+        ));
   }
 }
 
