@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'data.dart';
@@ -10,7 +11,21 @@ class AddContact extends StatelessWidget {
   final nameController = TextEditingController();
   final numberController = TextEditingController();
 
-  final Contacts contact = Contacts();
+  Future<void> updateData(BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance.collection('contacts').add({
+        "name": nameController.value.text,
+        "num": numberController.value.text
+      });
+      Navigator.pop(context);
+    } catch (e) {
+      var snackBar = SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(e.toString()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +62,7 @@ class AddContact extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  contact.updateList(Contact(
-                      name: nameController.value.text,
-                      num: numberController.value.text));
-                  Navigator.pop(context);
+                  updateData(context);
                 }
               },
               child: Text("Add Contact"),
