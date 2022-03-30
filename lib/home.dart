@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact/add_contact.dart';
+import 'package:contact/edit_contact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:math' as math;
@@ -95,11 +96,12 @@ class ContactWidget extends StatelessWidget {
           motion: ScrollMotion(),
           children: [
             SlidableAction(
-              onPressed: (context) async {
-                await FirebaseFirestore.instance
-                    .collection('contacts')
-                    .doc(id)
-                    .update({"name": "updated"});
+              onPressed: (context) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EditContact(name: name, num: num, id: id)));
               },
               backgroundColor: Color(0xFF7BC043),
               foregroundColor: Colors.white,

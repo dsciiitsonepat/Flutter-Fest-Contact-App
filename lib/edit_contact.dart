@@ -1,37 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'data.dart';
+class EditContact extends StatefulWidget {
+  EditContact({required this.id, required this.name, required this.num});
+  final String id;
+  final String name;
+  final String num;
+  @override
+  _EditContactState createState() => _EditContactState();
+}
 
-class AddContact extends StatelessWidget {
-  AddContact({Key? key}) : super(key: key);
-
+class _EditContactState extends State<EditContact> {
   final _formKey = GlobalKey<FormState>();
 
-  final nameController = TextEditingController();
-  final numberController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController numberController;
 
-  Future<void> updateData(BuildContext context) async {
-    try {
-      await FirebaseFirestore.instance.collection('contacts').add({
-        "name": nameController.value.text,
-        "num": numberController.value.text
-      });
-      Navigator.pop(context);
-    } catch (e) {
-      var snackBar = SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(e.toString()),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
+  @override
+  void initState() {
+    nameController = TextEditingController(text: widget.name);
+    numberController = TextEditingController(text: widget.num);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Contact"),
+        title: Text("Edit Contact"),
       ),
       body: Form(
         key: _formKey,
@@ -71,12 +67,23 @@ class AddContact extends StatelessWidget {
                 height: 30,
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    updateData(context);
+                    try {
+                      await FirebaseFirestore.instance
+                          .collection('contacts')
+                          .doc(widget.id)
+                          .update({
+                        "name": nameController.value.text,
+                        "num": numberController.value.text
+                      });
+                      Navigator.pop(context);
+                    } catch (e) {
+                      print(e);
+                    }
                   }
                 },
-                child: Text("Add Contact"),
+                child: Text("Update Contact"),
               ),
             ],
           ),
