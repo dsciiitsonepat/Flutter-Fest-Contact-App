@@ -1,14 +1,18 @@
 # Contacts
 ## _The Contact App_
 
-![](images/contact.png)
+<img src="images/contact.png" width="100px" height="100px"/>
 
 Contacts is a flutter app that can be used across multiple platforms. It is connected to firebase which allows it to fetch data from the internet without copying contacts from one device to another. It allows user to edit, create or delete contacts directly from the application.
 
 Here are the key features in detail:
+
 ⭐ Call user directly from app
+
 ⭐ Easy to use UI
+
 ⭐ Edit or delete contacts
+
 ⭐ Create contacts
 
 ## Tech
